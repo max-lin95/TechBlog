@@ -55,7 +55,7 @@ router.get('/edit/:id', withAuth, (req, res) => {
             {
                 model: Comments,
                 attributes: [
-                    'id', 'comment_text', 'post_id', 'user_id', 'created_at'
+                    'id', 'comments_content', 'posts_id', 'user_id', 'created_at'
                 ],
                 include: {
                     model: User,
@@ -72,7 +72,7 @@ router.get('/edit/:id', withAuth, (req, res) => {
 
         const posts = dbPostsData.get({ plain:true });
         res.render('edit-post', {
-            post,
+            posts,
             loggedIn: req.session.loggedIn
         });
     })
