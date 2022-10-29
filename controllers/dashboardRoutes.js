@@ -39,4 +39,51 @@ router.get('/', withAuth, (req, res) => {
         res.status(500).json(err);
     });
 });
+// gets singular post
+router.get('/edit/:id', withAuth, (req, res) => {
+    Posts.findOne({
+        where: {
+            id: req.params.id
+        },
+        attributes: [
+            'created_at',
+            'id',
+            'title',
+            'posts_content'
+        ],
+        include: [
+            {
+                model: Comments,
+                attributes: [
+                    'id', 'comment_text', 'post_id', 'user_id', 'created_at'
+                ],
+                include: {
+                    model: User,
+                    attributes: ['username']
+                }
+            }
+        ]
+    })
+    .then(dbPostsData => {
+        if (!dbPostsData) {
+            res.status(404).json({ message: 'No post found with this ID' });
+            return;
+        }
 
+        const posts = dbPostsData.get({ plain:true });
+        res.render('edit-post', {
+            post,
+            loggedIn: req.session.loggedIn
+        });
+    })
+    .catch(err => {
+        console.log(err);
+        res.status(500).json(err);
+    });
+});
+
+router.get('/new', (req, res) => {
+    res.render('new-post');
+});
+
+module.exports = router;
